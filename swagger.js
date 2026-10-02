@@ -14,6 +14,10 @@ const doc = {
       url: "http://localhost:8080",
       description: "Local Development Server",
     },
+    {
+      url: "https://careertrack-api-t7e8.onrender.com/",
+      description: "Render Production Server",
+    },
   ],
   tags: [
     {
