@@ -1,26 +1,72 @@
 const { MongoClient } = require("mongodb");
-const dotenv = require("dotenv");
-dotenv.config();
+
 let database;
+let client;
+
 async function connectDatabase() {
+  if (database) {
+    return database;
+  }
+
+  const connectionString = process.env.MONGODB_URI;
+  const databaseName = process.env.DATABASE_NAME;
+
+  if (!connectionString) {
+    throw new Error(
+      "MONGODB_URI environment variable is not defined."
+    );
+  }
+
+  if (!databaseName) {
+    throw new Error(
+      "DATABASE_NAME environment variable is not defined."
+    );
+  }
+
   try {
-    const client = new MongoClient(process.env.MONGODB_URI);
+    client = new MongoClient(connectionString);
+
     await client.connect();
-    database = client.db(process.env.DATABASE_NAME);
-    console.log("Connected to MongoDB");
+
+    database = client.db(databaseName);
+
+    console.log(
+      `Connected successfully to MongoDB database: ${databaseName}`
+    );
+
     return database;
   } catch (error) {
-    console.error("MongoDB connection failed:", error.message);
+    console.error(
+      "Error connecting to MongoDB:",
+      error.message
+    );
+
     throw error;
   }
 }
+
 function getDatabase() {
   if (!database) {
-    throw new Error("Database has not been initialized.");
+    throw new Error(
+      "Database has not been initialized. Call connectDatabase() first."
+    );
   }
+
   return database;
 }
+
+async function closeDatabase() {
+  if (client) {
+    await client.close();
+    client = null;
+    database = null;
+
+    console.log("MongoDB connection closed.");
+  }
+}
+
 module.exports = {
   connectDatabase,
   getDatabase,
+  closeDatabase,
 };

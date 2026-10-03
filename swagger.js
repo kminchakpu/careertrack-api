@@ -1,18 +1,48 @@
-const swaggerAutogen = require("swagger-autogen")();
+const swaggerAutogen = require("swagger-autogen")({
+  openapi: "3.0.0",
+});
+
 const doc = {
   info: {
     title: "CareerTrack API",
-    description: "CSE 341 Final Project - Job Application Tracking API",
+    version: "1.0.0",
+    description:
+      "API documentation for managing job applications and companies in CareerTrack.",
   },
-  host: "localhost:8080",
-  schemes: ["http"],
+  servers: [
+    {
+      url: "http://localhost:8080",
+      description: "Local Development Server",
+    },
+    {
+      url: "https://careertrack-api-t7e8.onrender.com/",
+      description: "Render Production Server",
+    },
+  ],
+  tags: [
+    {
+      name: "Applications",
+      description: "Endpoints for managing job applications",
+    },
+    {
+      name: "Companies",
+      description: "Endpoints for managing companies",
+    },
+  ],
 };
+
 const outputFile = "./swagger-output.json";
-const endpointsFiles = [
-  "./routes/applicationsRoutes.js",
-  "./routes/companiesRoutes.js",
-  "./routes/interviewsRoutes.js",
-  "./routes/usersRoutes.js",
-  "./routes/authRoutes.js",
-];
-swaggerAutogen(outputFile, endpointsFiles, doc);
+const endpointsFiles = ["./swagger-routes.js"];
+
+swaggerAutogen(outputFile, endpointsFiles, doc)
+  .then(() => {
+    console.log(
+      "Swagger documentation generated successfully."
+    );
+  })
+  .catch((error) => {
+    console.error(
+      "Failed to generate Swagger documentation:",
+      error
+    );
+  });
