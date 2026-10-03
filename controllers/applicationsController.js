@@ -15,7 +15,7 @@ const buildApplication = (body) => ({
     salaryRange: body.salaryRange,
     jobUrl: body.jobUrl,
     notes: body.notes,
-    createdAt: body.createdAt,
+    createdAt: new Date().toISOString(),
 });
 
 const getAllApplications = async (req, res) => {
