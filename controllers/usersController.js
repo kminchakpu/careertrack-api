@@ -4,6 +4,7 @@ const getAllUsers = async (req, res) => {
       message: "Get all users",
     });
   } catch (error) {
+    console.error("Error getting users:", error);
     res.status(500).json({
       error: "Failed to retrieve users",
     });
@@ -16,6 +17,7 @@ const getUserById = async (req, res) => {
       message: `Get user ${req.params.id}`,
     });
   } catch (error) {
+    console.error("Error getting user:", error);
     res.status(500).json({
       error: "Failed to retrieve user",
     });
@@ -28,6 +30,7 @@ const createUser = async (req, res) => {
       message: "User created successfully",
     });
   } catch (error) {
+    console.error("Error creating user:", error);
     res.status(500).json({
       error: "Failed to create user",
     });
@@ -40,6 +43,7 @@ const updateUser = async (req, res) => {
       message: `User ${req.params.id} updated successfully`,
     });
   } catch (error) {
+    console.error("Error updating user:", error);
     res.status(500).json({
       error: "Failed to update user",
     });
@@ -52,6 +56,7 @@ const deleteUser = async (req, res) => {
       message: `User ${req.params.id} deleted successfully`,
     });
   } catch (error) {
+    console.error("Error deleting user:", error);
     res.status(500).json({
       error: "Failed to delete user",
     });
