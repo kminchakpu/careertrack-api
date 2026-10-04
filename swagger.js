@@ -7,7 +7,7 @@ const doc = {
     title: "CareerTrack API",
     version: "1.0.0",
     description:
-      "API documentation for managing job applications, companies, interviews, and users in CareerTrack. Authentication is handled through Google OAuth and Passport sessions.",
+      "API documentation for managing job applications and companies in CareerTrack. Authentication is handled through Google OAuth and Passport sessions.",
   },
   servers: [
     {
@@ -27,14 +27,6 @@ const doc = {
     {
       name: "Companies",
       description: "Endpoints for managing companies",
-    },
-    {
-      name: "Interviews",
-      description: "Endpoints for managing interviews",
-    },
-    {
-      name: "Users",
-      description: "Endpoints for managing users",
     },
     {
       name: "Authentication",
