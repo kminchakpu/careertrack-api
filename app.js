@@ -72,8 +72,12 @@ try {
     swaggerUi.setup(swaggerDocument)
   );
 } catch (error) {
+  console.error(
+    "Swagger documentation has not been generated yet.",
+    error.message
+  );
   console.log(
-    "Swagger documentation has not been generated yet. Run npm run swagger."
+    "Run npm run swagger to generate the Swagger documentation."
   );
 }
 
