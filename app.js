@@ -12,6 +12,9 @@ const interviewsRoutes = require("./routes/interviewsRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 const authRoutes = require("./routes/authRoutes");
 
+const {
+  ensureAuthenticated,
+} = require("./middleware/authMiddleware");
 const errorMiddleware = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -58,10 +61,30 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", authRoutes);
-app.use("/api/applications", applicationsRoutes);
-app.use("/api/companies", companiesRoutes);
-app.use("/api/interviews", interviewsRoutes);
-app.use("/api/users", usersRoutes);
+
+app.use(
+  "/api/applications",
+  ensureAuthenticated,
+  applicationsRoutes
+);
+
+app.use(
+  "/api/companies",
+  ensureAuthenticated,
+  companiesRoutes
+);
+
+app.use(
+  "/api/interviews",
+  ensureAuthenticated,
+  interviewsRoutes
+);
+
+app.use(
+  "/api/users",
+  ensureAuthenticated,
+  usersRoutes
+);
 
 try {
   const swaggerDocument = require("./swagger-output.json");

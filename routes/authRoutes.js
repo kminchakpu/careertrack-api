@@ -10,6 +10,8 @@ router.get(
     #swagger.summary = "Sign in with Google"
     #swagger.description = "Starts the Google OAuth 2.0 authentication flow."
 
+    #swagger.security = []
+
     #swagger.responses[302] = {
       description: "Redirects the user to Google for authentication"
     }
@@ -25,6 +27,8 @@ router.get(
     #swagger.tags = ["Authentication"]
     #swagger.summary = "Google OAuth callback"
     #swagger.description = "Handles the response returned by Google after authentication."
+
+    #swagger.security = []
 
     #swagger.responses[302] = {
       description: "Authentication successful and user redirected"
@@ -48,10 +52,6 @@ router.get(
     #swagger.tags = ["Authentication"]
     #swagger.summary = "Get authenticated user profile"
     #swagger.description = "Returns the currently authenticated CareerTrack user."
-
-    #swagger.security = [{
-      "sessionAuth": []
-    }]
 
     #swagger.responses[200] = {
       description: "Authenticated user returned successfully"
@@ -80,6 +80,9 @@ router.get(
   /*
     #swagger.tags = ["Authentication"]
     #swagger.summary = "Check authentication status"
+    #swagger.description = "Checks whether the current user has an authenticated session."
+
+    #swagger.security = []
 
     #swagger.responses[200] = {
       description: "Authentication status returned successfully"
@@ -105,6 +108,9 @@ router.get(
   /*
     #swagger.tags = ["Authentication"]
     #swagger.summary = "Google authentication failure"
+    #swagger.description = "Returns an authentication failure response when Google OAuth authentication fails."
+
+    #swagger.security = []
 
     #swagger.responses[401] = {
       description: "Google authentication failed"
@@ -124,12 +130,12 @@ router.get(
     #swagger.summary = "Log out the current user"
     #swagger.description = "Ends the authenticated Passport session."
 
-    #swagger.security = [{
-      "sessionAuth": []
-    }]
-
     #swagger.responses[200] = {
       description: "User logged out successfully"
+    }
+
+    #swagger.responses[401] = {
+      description: "Authentication required"
     }
 
     #swagger.responses[500] = {
@@ -137,6 +143,12 @@ router.get(
     }
   */
   (req, res, next) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({
+        error: "Authentication required",
+      });
+    }
+
     req.logout((error) => {
       if (error) {
         return next(error);

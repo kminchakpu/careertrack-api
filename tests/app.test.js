@@ -6,16 +6,11 @@ jest.mock("../db/connect", () => ({
   closeDatabase: jest.fn(),
 }));
 
-const mongodb = require("../db/connect");
 const app = require("../app");
 
-describe("CareerTrack API GET endpoints", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  describe("GET /", () => {
-    test("should return the CareerTrack API welcome message", async () => {
+describe("CareerTrack API", () => {
+  describe("Public endpoints", () => {
+    test("GET / should return the CareerTrack API welcome message", async () => {
       const response = await request(app).get("/");
 
       expect(response.statusCode).toBe(200);
@@ -29,100 +24,104 @@ describe("CareerTrack API GET endpoints", () => {
     });
   });
 
-  describe("GET /api/applications", () => {
-    test("should return all applications", async () => {
-      const mockApplications = [
-        {
-          _id: "68de11111111111111111111",
-          userId: "user-1",
-          companyId: "company-1",
-          jobTitle: "Backend Developer",
-          status: "Applied",
-        },
-        {
-          _id: "68de22222222222222222222",
-          userId: "user-2",
-          companyId: "company-2",
-          jobTitle: "Frontend Developer",
-          status: "Interview",
-        },
-      ];
-
-      const mockToArray = jest
-        .fn()
-        .mockResolvedValue(mockApplications);
-
-      const mockFind = jest.fn().mockReturnValue({
-        toArray: mockToArray,
-      });
-
-      const mockCollection = jest.fn().mockReturnValue({
-        find: mockFind,
-      });
-
-      mongodb.getDatabase.mockReturnValue({
-        collection: mockCollection,
-      });
-
+  describe("Protected application endpoints", () => {
+    test("GET /api/applications should require authentication", async () => {
       const response = await request(app).get(
         "/api/applications"
       );
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toEqual(mockApplications);
-      expect(mockCollection).toHaveBeenCalledWith(
-        "applications"
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+
+    test("GET /api/applications/:id should require authentication", async () => {
+      const response = await request(app).get(
+        "/api/applications/68de11111111111111111111"
       );
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
     });
   });
 
-  describe("GET /api/companies", () => {
-    test("should return all companies", async () => {
-      const mockCompanies = [
-        {
-          _id: "68de33333333333333333333",
-          name: "Tech Solutions",
-          industry: "Technology",
-          location: "Lagos, Nigeria",
-        },
-        {
-          _id: "68de44444444444444444444",
-          name: "Career Systems",
-          industry: "Software",
-          location: "Abuja, Nigeria",
-        },
-      ];
-
-      const mockToArray = jest
-        .fn()
-        .mockResolvedValue(mockCompanies);
-
-      const mockFind = jest.fn().mockReturnValue({
-        toArray: mockToArray,
-      });
-
-      const mockCollection = jest.fn().mockReturnValue({
-        find: mockFind,
-      });
-
-      mongodb.getDatabase.mockReturnValue({
-        collection: mockCollection,
-      });
-
+  describe("Protected company endpoints", () => {
+    test("GET /api/companies should require authentication", async () => {
       const response = await request(app).get(
         "/api/companies"
       );
 
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toEqual(mockCompanies);
-      expect(mockCollection).toHaveBeenCalledWith(
-        "companies"
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+
+    test("GET /api/companies/:id should require authentication", async () => {
+      const response = await request(app).get(
+        "/api/companies/68de33333333333333333333"
       );
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
     });
   });
 
-  describe("GET unknown route", () => {
-    test("should return 404 for an unknown route", async () => {
+  describe("Protected interview endpoints", () => {
+    test("GET /api/interviews should require authentication", async () => {
+      const response = await request(app).get(
+        "/api/interviews"
+      );
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+
+    test("GET /api/interviews/:id should require authentication", async () => {
+      const response = await request(app).get(
+        "/api/interviews/68de55555555555555555555"
+      );
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+  });
+
+  describe("Protected user endpoints", () => {
+    test("GET /api/users should require authentication", async () => {
+      const response = await request(app).get(
+        "/api/users"
+      );
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+
+    test("GET /api/users/:id should require authentication", async () => {
+      const response = await request(app).get(
+        "/api/users/68de77777777777777777777"
+      );
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+  });
+
+  describe("Unknown routes", () => {
+    test("GET unknown route should return 404", async () => {
       const response = await request(app).get(
         "/api/does-not-exist"
       );
