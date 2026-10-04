@@ -34,6 +34,14 @@ const getCompanyById = async (req, res) => {
       res.setHeader("Content-Type", "application/json");
       res.status(200).json(companies[0]);
     });
+
+    if (!company) {
+      return res.status(404).json({
+        error: "Company not found",
+      });
+    }
+
+    res.status(200).json(company);
   } catch (error) {
     console.error("Error getting a company:", error);
     res.status(500).json({

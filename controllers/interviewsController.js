@@ -4,6 +4,7 @@ const getAllInterviews = async (req, res) => {
       message: "Get all interviews",
     });
   } catch (error) {
+    console.error("Error getting interviews:", error);
     res.status(500).json({
       error: "Failed to retrieve interviews",
     });
@@ -16,6 +17,7 @@ const getInterviewById = async (req, res) => {
       message: `Get interview ${req.params.id}`,
     });
   } catch (error) {
+    console.error("Error getting interview:", error);
     res.status(500).json({
       error: "Failed to retrieve interview",
     });
@@ -28,6 +30,7 @@ const createInterview = async (req, res) => {
       message: "Interview created successfully",
     });
   } catch (error) {
+    console.error("Error creating interview:", error);
     res.status(500).json({
       error: "Failed to create interview",
     });
@@ -40,6 +43,7 @@ const updateInterview = async (req, res) => {
       message: `Interview ${req.params.id} updated successfully`,
     });
   } catch (error) {
+    console.error("Error updating interview:", error);
     res.status(500).json({
       error: "Failed to update interview",
     });
@@ -52,6 +56,7 @@ const deleteInterview = async (req, res) => {
       message: `Interview ${req.params.id} deleted successfully`,
     });
   } catch (error) {
+    console.error("Error deleting interview:", error);
     res.status(500).json({
       error: "Failed to delete interview",
     });
