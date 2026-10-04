@@ -33,4 +33,23 @@ module.exports = defineConfig([
       "no-undef": "error",
     },
   },
+  {
+    files: [
+      "tests/**/*.js",
+      "**/*.test.js",
+      "**/*.spec.js",
+    ],
+    languageOptions: {
+      globals: {
+        jest: "readonly",
+        describe: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+      },
+    },
+  },
 ]);
