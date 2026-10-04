@@ -7,17 +7,10 @@
     "start": "nodemon server.js",
     "dev": "nodemon server.js",
     "swagger": "node swagger.js",
+    "lint": "eslint .",
+    "build": "npm run lint && npm test && npm run swagger",
     "test": "jest --runInBand"
   },
-  "main": "index.js",
-  "scripts": {
-  "start": "node server.js",
-  "dev": "nodemon server.js",
-  "swagger": "node swagger.js",
-  "lint": "eslint .",
-  "build": "npm run lint && npm test && npm run swagger",
-  "test": "jest --runInBand"
-},
   "keywords": [],
   "type": "commonjs",
   "dependencies": {
@@ -29,8 +22,7 @@
     "mongodb": "^7.7.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "swagger-ui-express": "^5.0.1",
-    "validatorjs": "^3.22.1"
+    "validatorjs": "^3.22.1",
     "swagger": "^0.7.5",
     "swagger-ui-express": "^5.0.1"
   },
