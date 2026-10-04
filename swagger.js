@@ -7,7 +7,7 @@ const doc = {
     title: "CareerTrack API",
     version: "1.0.0",
     description:
-      "API documentation for managing job applications, companies, interviews, and users in CareerTrack.",
+      "API documentation for managing job applications and companies in CareerTrack.",
   },
   servers: [
     {
@@ -15,15 +15,11 @@ const doc = {
       description: "Local Development Server",
     },
     {
-      url: "https://careertrack-api-t7e8.onrender.com",
+      url: "https://careertrack-api-t7e8.onrender.com/",
       description: "Render Production Server",
     },
   ],
   tags: [
-    {
-      name: "Authentication",
-      description: "Endpoints for Google OAuth authentication",
-    },
     {
       name: "Applications",
       description: "Endpoints for managing job applications",
@@ -31,14 +27,6 @@ const doc = {
     {
       name: "Companies",
       description: "Endpoints for managing companies",
-    },
-    {
-      name: "Interviews",
-      description: "Endpoints for managing interviews",
-    },
-    {
-      name: "Users",
-      description: "Endpoints for managing users",
     },
   ],
 };
@@ -57,5 +45,4 @@ swaggerAutogen(outputFile, endpointsFiles, doc)
       "Failed to generate Swagger documentation:",
       error
     );
-    process.exit(1);
   });
