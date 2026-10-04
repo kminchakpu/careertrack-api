@@ -3,7 +3,7 @@ const ObjectId = require("mongodb").ObjectId;
 
 const getAllCompanies = async (req, res) => {
   try {
-    const result = await mongodb.getDatabase().db().collection("companies").find();
+    const result = await mongodb.getDatabase().collection("companies").find();
     result.toArray().then((companies) => {
       if (companies.length === 0) {
         return res.status(404).json({ message: "Database is empty" });
@@ -26,7 +26,7 @@ const getCompanyById = async (req, res) => {
       res.status(400).json("You must use a valid company id.");
     }
     const dbId = new ObjectId(req.params.id);
-    const result = await mongodb.getDatabase().db().collection("companies").find({ _id: dbId });
+    const result = await mongodb.getDatabase().collection("companies").find({ _id: dbId });
     result.toArray().then((companies) => {
       if (companies.length === 0) {
         return res.status(404).json({ message: "ID not found" });
@@ -60,7 +60,7 @@ const createCompany = async (req, res) => {
       || !contactEmail || !notes || !createdAt) {
       return res.status(400).json({ message: "All fields are required." });
     };
-    const response = await mongodb.getDatabase().db().collection("companies").insertOne(company);
+    const response = await mongodb.getDatabase().collection("companies").insertOne(company);
     if (response.acknowledged) {
       res.status(201).json({ id: response.insertedId });
     } else {
@@ -96,7 +96,7 @@ const updateCompany = async (req, res) => {
       || !contactEmail || !notes || !createdAt) {
       return res.status(400).json({ message: "All fields are required." });
     };
-    const response = await mongodb.getDatabase().db().collection("companies").replaceOne({ _id: dbId }, company);
+    const response = await mongodb.getDatabase().collection("companies").replaceOne({ _id: dbId }, company);
     if (response.matchedCount === 0) {
       return res.status(404).json({ message: "ID not found" });
     }
@@ -120,7 +120,7 @@ const deleteCompany = async (req, res) => {
       res.status(400).json("You must use a valid company id to delete it.");
     }
     const dbId = new ObjectId(req.params.id);
-    const response = await mongodb.getDatabase().db().collection("companies").deleteOne({ _id: dbId });
+    const response = await mongodb.getDatabase().collection("companies").deleteOne({ _id: dbId });
     if (response.deletedCount === 0) {
       return res.status(404).json({ message: "ID not found" });
     } else if (response.deletedCount > 0) {
