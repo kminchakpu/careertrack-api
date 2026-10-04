@@ -2,6 +2,13 @@
   "name": "careertrack-api",
   "version": "1.0.0",
   "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "dev": "nodemon server.js",
+    "swagger": "node swagger.js",
+    "test": "jest --runInBand"
+  },
   "main": "index.js",
   "scripts": {
   "start": "node server.js",
@@ -22,6 +29,8 @@
     "mongodb": "^7.7.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "swagger-ui-express": "^5.0.1",
+    "validatorjs": "^3.22.1"
     "swagger": "^0.7.5",
     "swagger-ui-express": "^5.0.1"
   },
