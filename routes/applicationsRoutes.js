@@ -35,7 +35,9 @@ router.get(
       in: "path",
       description: "Application ID",
       required: true,
-      type: "string"
+      schema: {
+        type: "string"
+      }
     }
 
     #swagger.responses[200] = {
@@ -79,22 +81,21 @@ router.post(
               "jobType"
             ],
             properties: {
+              userId: {
+                type: "string"
+              },
               companyId: {
-                type: "string",
-                example: "68de22222222222222222221"
+                type: "string"
               },
               jobTitle: {
-                type: "string",
-                example: "Node.js Backend Developer"
+                type: "string"
               },
               location: {
-                type: "string",
-                example: "Lagos, Nigeria"
+                type: "string"
               },
               applicationDate: {
                 type: "string",
-                format: "date",
-                example: "2026-10-01"
+                format: "date"
               },
               status: {
                 type: "string",
@@ -105,8 +106,7 @@ router.post(
                   "Offer",
                   "Rejected",
                   "Withdrawn"
-                ],
-                example: "Applied"
+                ]
               },
               jobType: {
                 type: "string",
@@ -116,22 +116,31 @@ router.post(
                   "Contract",
                   "Internship",
                   "Remote"
-                ],
-                example: "Full-time"
+                ]
               },
               salaryRange: {
-                type: "string",
-                example: "NGN 700,000 - 1,000,000 monthly"
+                type: "string"
               },
               jobUrl: {
                 type: "string",
-                example: "https://example.com/jobs/backend"
+                format: "uri"
               },
               notes: {
-                type: "string",
-                example: "Applied through the company website."
+                type: "string"
               }
             }
+          },
+          example: {
+            userId: "65f1a2b3c4d5e6f7a8b9c0d1",
+            companyId: "65f1a2b3c4d5e6f7a8b9c0d2",
+            jobTitle: "Fullstack Developer",
+            location: "Abuja, Nigeria",
+            applicationDate: "2026-10-06",
+            status: "Applied",
+            jobType: "Full-time",
+            salaryRange: "NGN 900,000 - 1,300,000 monthly",
+            jobUrl: "https://example.com/job",
+            notes: "Application submitted successfully."
           }
         }
       }
@@ -165,7 +174,9 @@ router.put(
       in: "path",
       description: "Application ID",
       required: true,
-      type: "string"
+      schema: {
+        type: "string"
+      }
     }
 
     #swagger.requestBody = {
@@ -183,22 +194,21 @@ router.put(
               "jobType"
             ],
             properties: {
+              userId: {
+                type: "string"
+              },
               companyId: {
-                type: "string",
-                example: "68de22222222222222222221"
+                type: "string"
               },
               jobTitle: {
-                type: "string",
-                example: "Senior Node.js Backend Developer"
+                type: "string"
               },
               location: {
-                type: "string",
-                example: "Lagos, Nigeria"
+                type: "string"
               },
               applicationDate: {
                 type: "string",
-                format: "date",
-                example: "2026-10-01"
+                format: "date"
               },
               status: {
                 type: "string",
@@ -209,8 +219,7 @@ router.put(
                   "Offer",
                   "Rejected",
                   "Withdrawn"
-                ],
-                example: "Interview"
+                ]
               },
               jobType: {
                 type: "string",
@@ -220,22 +229,31 @@ router.put(
                   "Contract",
                   "Internship",
                   "Remote"
-                ],
-                example: "Full-time"
+                ]
               },
               salaryRange: {
-                type: "string",
-                example: "NGN 900,000 - 1,200,000 monthly"
+                type: "string"
               },
               jobUrl: {
                 type: "string",
-                example: "https://example.com/jobs/backend"
+                format: "uri"
               },
               notes: {
-                type: "string",
-                example: "Interview scheduled."
+                type: "string"
               }
             }
+          },
+          example: {
+            userId: "65f1a2b3c4d5e6f7a8b9c0d1",
+            companyId: "65f1a2b3c4d5e6f7a8b9c0d2",
+            jobTitle: "Senior Fullstack Developer",
+            location: "Abuja, Nigeria",
+            applicationDate: "2026-10-06",
+            status: "Interview",
+            jobType: "Full-time",
+            salaryRange: "NGN 1,000,000 - 1,500,000 monthly",
+            jobUrl: "https://example.com/job",
+            notes: "Interview has been scheduled."
           }
         }
       }
@@ -273,7 +291,9 @@ router.delete(
       in: "path",
       description: "Application ID",
       required: true,
-      type: "string"
+      schema: {
+        type: "string"
+      }
     }
 
     #swagger.responses[200] = {
