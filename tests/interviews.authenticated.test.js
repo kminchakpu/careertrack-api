@@ -7,9 +7,7 @@ jest.mock("../middleware/authMiddleware", () => ({
       email: "testuser@example.com",
       role: "user",
     };
-
     req.isAuthenticated = () => true;
-
     next();
   },
 }));
@@ -41,6 +39,7 @@ describe("Authenticated interview writes", () => {
     const response = await request(app)
       .post("/api/interviews")
       .send({
+        userId: "68de44444444444444444444",
         applicationId: "68de11111111111111111111",
         interviewDate: "2026-10-15T10:00:00.000Z",
         interviewType: "Technical",
@@ -74,6 +73,7 @@ describe("Authenticated interview writes", () => {
     const response = await request(app)
       .put("/api/interviews/68de33333333333333333333")
       .send({
+        userId: "68de44444444444444444444",
         applicationId: "68de11111111111111111111",
         interviewDate: "2026-10-17T14:00:00.000Z",
         interviewType: "Final",

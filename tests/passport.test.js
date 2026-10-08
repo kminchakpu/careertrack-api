@@ -1,9 +1,13 @@
+process.env.GOOGLE_CLIENT_ID = "test-google-client-id";
+process.env.GOOGLE_CLIENT_SECRET = "test-google-client-secret";
+process.env.GOOGLE_CALLBACK_URL =
+  "http://localhost:8080/auth/google/callback";
+
 jest.mock("../db/connect", () => ({
   getDatabase: jest.fn(),
 }));
 
 const passport = require("../config/passport");
-const { getDatabase } = require("../db/connect");
 
 describe("Passport session behavior", () => {
   beforeEach(() => {

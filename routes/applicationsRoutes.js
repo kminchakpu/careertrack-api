@@ -5,6 +5,9 @@ const {
   applicationValidationRules,
   validate,
 } = require("../middleware/validation");
+const {
+  ensureAuthenticated,
+} = require("../middleware/authMiddleware");
 
 router.get(
   "/",
@@ -64,7 +67,7 @@ router.post(
   /*
     #swagger.tags = ["Applications"]
     #swagger.summary = "Create a new application"
-    #swagger.description = "Create a new job application."
+    #swagger.description = "Create a new job application. Authentication is required."
 
     #swagger.requestBody = {
       required: true,
@@ -154,10 +157,15 @@ router.post(
       description: "Validation failed"
     }
 
+    #swagger.responses[401] = {
+      description: "Authentication required"
+    }
+
     #swagger.responses[500] = {
       description: "Failed to create application"
     }
   */
+  ensureAuthenticated,
   applicationValidationRules,
   validate,
   applicationsController.createApplication
@@ -168,7 +176,7 @@ router.put(
   /*
     #swagger.tags = ["Applications"]
     #swagger.summary = "Update an application"
-    #swagger.description = "Update an existing job application by its ID."
+    #swagger.description = "Update an existing job application by its ID. Authentication is required."
 
     #swagger.parameters["id"] = {
       in: "path",
@@ -267,6 +275,10 @@ router.put(
       description: "Invalid application ID or validation failed"
     }
 
+    #swagger.responses[401] = {
+      description: "Authentication required"
+    }
+
     #swagger.responses[404] = {
       description: "Application not found"
     }
@@ -275,6 +287,7 @@ router.put(
       description: "Failed to update application"
     }
   */
+  ensureAuthenticated,
   applicationValidationRules,
   validate,
   applicationsController.updateApplication
@@ -285,7 +298,7 @@ router.delete(
   /*
     #swagger.tags = ["Applications"]
     #swagger.summary = "Delete an application"
-    #swagger.description = "Delete a job application by its ID."
+    #swagger.description = "Delete a job application by its ID. Authentication is required."
 
     #swagger.parameters["id"] = {
       in: "path",
@@ -304,6 +317,10 @@ router.delete(
       description: "Invalid application ID"
     }
 
+    #swagger.responses[401] = {
+      description: "Authentication required"
+    }
+
     #swagger.responses[404] = {
       description: "Application not found"
     }
@@ -312,6 +329,7 @@ router.delete(
       description: "Failed to delete application"
     }
   */
+  ensureAuthenticated,
   applicationsController.deleteApplication
 );
 

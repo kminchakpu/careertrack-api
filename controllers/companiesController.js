@@ -9,19 +9,12 @@ const getAllCompanies = async (req, res) => {
       .find()
       .toArray();
 
-    if (companies.length === 0) {
-      return res.status(404).json({
-        message: "Database is empty",
-      });
-    }
-
-    res.status(200).json(companies);
+    return res.status(200).json(companies);
   } catch (error) {
     console.error("Error getting companies:", error);
 
-    res.status(500).json({
-      message: "Failed to retrieve companies",
-      error: error.message,
+    return res.status(500).json({
+      error: "Failed to retrieve companies",
     });
   }
 };
@@ -32,7 +25,7 @@ const getCompanyById = async (req, res) => {
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
-        message: "You must use a valid company id.",
+        error: "Invalid company ID",
       });
     }
 
@@ -45,17 +38,16 @@ const getCompanyById = async (req, res) => {
 
     if (!company) {
       return res.status(404).json({
-        message: "Company not found",
+        error: "Company not found",
       });
     }
 
-    res.status(200).json(company);
+    return res.status(200).json(company);
   } catch (error) {
     console.error("Error getting a company:", error);
 
-    res.status(500).json({
-      message: "Error getting a company",
-      error: error.message,
+    return res.status(500).json({
+      error: "Failed to retrieve company",
     });
   }
 };
@@ -113,14 +105,14 @@ const createCompany = async (req, res) => {
       });
     }
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Company created successfully",
       id: response.insertedId,
     });
   } catch (error) {
     console.error("Error creating the company:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error creating the company",
       error: error.message,
     });
@@ -193,13 +185,13 @@ const updateCompany = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Company updated successfully",
     });
   } catch (error) {
     console.error("Error updating the company:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error updating the company",
       error: error.message,
     });
@@ -229,13 +221,13 @@ const deleteCompany = async (req, res) => {
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Company removed successfully",
     });
   } catch (error) {
     console.error("Error deleting the company:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Error deleting the company",
       error: error.message,
     });

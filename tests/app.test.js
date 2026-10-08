@@ -25,10 +25,10 @@ describe("CareerTrack API", () => {
   });
 
   describe("Protected application endpoints", () => {
-    test("GET /api/applications should require authentication", async () => {
-      const response = await request(app).get(
-        "/api/applications"
-      );
+    test("POST /api/applications should require authentication", async () => {
+      const response = await request(app)
+        .post("/api/applications")
+        .send({});
 
       expect(response.statusCode).toBe(401);
       expect(response.body).toEqual({
@@ -36,8 +36,19 @@ describe("CareerTrack API", () => {
       });
     });
 
-    test("GET /api/applications/:id should require authentication", async () => {
-      const response = await request(app).get(
+    test("PUT /api/applications/:id should require authentication", async () => {
+      const response = await request(app)
+        .put("/api/applications/68de11111111111111111111")
+        .send({});
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+
+    test("DELETE /api/applications/:id should require authentication", async () => {
+      const response = await request(app).delete(
         "/api/applications/68de11111111111111111111"
       );
 
@@ -49,10 +60,10 @@ describe("CareerTrack API", () => {
   });
 
   describe("Protected company endpoints", () => {
-    test("GET /api/companies should require authentication", async () => {
-      const response = await request(app).get(
-        "/api/companies"
-      );
+    test("POST /api/companies should require authentication", async () => {
+      const response = await request(app)
+        .post("/api/companies")
+        .send({});
 
       expect(response.statusCode).toBe(401);
       expect(response.body).toEqual({
@@ -60,8 +71,19 @@ describe("CareerTrack API", () => {
       });
     });
 
-    test("GET /api/companies/:id should require authentication", async () => {
-      const response = await request(app).get(
+    test("PUT /api/companies/:id should require authentication", async () => {
+      const response = await request(app)
+        .put("/api/companies/68de33333333333333333333")
+        .send({});
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+
+    test("DELETE /api/companies/:id should require authentication", async () => {
+      const response = await request(app).delete(
         "/api/companies/68de33333333333333333333"
       );
 
@@ -73,10 +95,10 @@ describe("CareerTrack API", () => {
   });
 
   describe("Protected interview endpoints", () => {
-    test("GET /api/interviews should require authentication", async () => {
-      const response = await request(app).get(
-        "/api/interviews"
-      );
+    test("POST /api/interviews should require authentication", async () => {
+      const response = await request(app)
+        .post("/api/interviews")
+        .send({});
 
       expect(response.statusCode).toBe(401);
       expect(response.body).toEqual({
@@ -84,8 +106,19 @@ describe("CareerTrack API", () => {
       });
     });
 
-    test("GET /api/interviews/:id should require authentication", async () => {
-      const response = await request(app).get(
+    test("PUT /api/interviews/:id should require authentication", async () => {
+      const response = await request(app)
+        .put("/api/interviews/68de55555555555555555555")
+        .send({});
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+
+    test("DELETE /api/interviews/:id should require authentication", async () => {
+      const response = await request(app).delete(
         "/api/interviews/68de55555555555555555555"
       );
 
@@ -97,10 +130,10 @@ describe("CareerTrack API", () => {
   });
 
   describe("Protected user endpoints", () => {
-    test("GET /api/users should require authentication", async () => {
-      const response = await request(app).get(
-        "/api/users"
-      );
+    test("POST /api/users should require authentication", async () => {
+      const response = await request(app)
+        .post("/api/users")
+        .send({});
 
       expect(response.statusCode).toBe(401);
       expect(response.body).toEqual({
@@ -108,8 +141,19 @@ describe("CareerTrack API", () => {
       });
     });
 
-    test("GET /api/users/:id should require authentication", async () => {
-      const response = await request(app).get(
+    test("PUT /api/users/:id should require authentication", async () => {
+      const response = await request(app)
+        .put("/api/users/68de77777777777777777777")
+        .send({});
+
+      expect(response.statusCode).toBe(401);
+      expect(response.body).toEqual({
+        error: "Authentication required",
+      });
+    });
+
+    test("DELETE /api/users/:id should require authentication", async () => {
+      const response = await request(app).delete(
         "/api/users/68de77777777777777777777"
       );
 
