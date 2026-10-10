@@ -1,0 +1,55 @@
+### INTERVIEWS
+
+### Get all interviews
+GET http://localhost:8080/api/interviews
+
+### Get interview by id
+GET http://localhost:8080/api/interviews/6ab3e572a6c146c62293f410
+
+### Get interview with invalid id (expect 400 "Invalid interview ID")
+GET http://localhost:8080/api/interviews/123
+
+### Get interview that does not exist (expect 404 "Interview not found")
+GET http://localhost:8080/api/interviews/65f1a2b3c4d5e6f7a8b9c0ff
+
+### Create interview
+POST http://localhost:8080/api/interviews HTTP/1.1
+content-type: application/json
+
+{
+  "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+  "applicationId": "6ab3e572a6c146c62293f403",
+  "interviewDate": "2026-11-10",
+  "interviewType": "Final",
+  "interviewer": "David Okafor",
+  "location": "Lagos, Nigeria",
+  "status": "Cancelled",
+  "notes": "Position filled internally before final round."
+}
+
+### Create interview missing required fields (expect 400)
+POST http://localhost:8080/api/interviews HTTP/1.1
+content-type: application/json
+
+{
+  "interviewer": "Jane Smith",
+  "location": "Online"
+}
+
+### Update interview
+PUT http://localhost:8080/api/interviews/6ab3e572a6c146c62293f410 HTTP/1.1
+content-type: application/json
+
+{
+  "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+  "applicationId": "6ab3e572a6c146c62293f403",
+  "interviewDate": "2026-10-22",
+  "interviewType": "Behavioral",
+  "interviewer": "Carlos Méndez",
+  "location": "Guatemala City, Guatemala",
+  "status": "Completed",
+  "notes": "Went well, waiting for feedback."
+}
+
+### Delete interview
+DELETE http://localhost:8080/api/interviews/6ab3e572a6c146c62293f410

@@ -1,4 +1,5 @@
 const getAllUsers = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     res.status(200).json({
       message: "Get all users",
@@ -11,6 +12,7 @@ const getAllUsers = async (req, res) => {
 };
 
 const getUserById = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     res.status(200).json({
       message: `Get user ${req.params.id}`,
@@ -23,6 +25,7 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     res.status(201).json({
       message: "User created successfully",
@@ -35,6 +38,7 @@ const createUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     res.status(200).json({
       message: `User ${req.params.id} updated successfully`,
@@ -47,6 +51,7 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     res.status(200).json({
       message: `User ${req.params.id} deleted successfully`,

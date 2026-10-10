@@ -1,4 +1,5 @@
 const getAllCompanies = async (req, res) => {
+  //#swagger.tags=['Companies']
   try {
     res.status(200).json({
       message: "Get all companies",
@@ -11,6 +12,7 @@ const getAllCompanies = async (req, res) => {
 };
 
 const getCompanyById = async (req, res) => {
+  //#swagger.tags=['Companies']
   try {
     res.status(200).json({
       message: `Get company ${req.params.id}`,
@@ -23,6 +25,7 @@ const getCompanyById = async (req, res) => {
 };
 
 const createCompany = async (req, res) => {
+  //#swagger.tags=['Companies']
   try {
     res.status(201).json({
       message: "Company created successfully",
@@ -35,6 +38,7 @@ const createCompany = async (req, res) => {
 };
 
 const updateCompany = async (req, res) => {
+  //#swagger.tags=['Companies']
   try {
     res.status(200).json({
       message: `Company ${req.params.id} updated successfully`,
@@ -47,6 +51,7 @@ const updateCompany = async (req, res) => {
 };
 
 const deleteCompany = async (req, res) => {
+  //#swagger.tags=['Companies']
   try {
     res.status(200).json({
       message: `Company ${req.params.id} deleted successfully`,
