@@ -66,22 +66,6 @@ const createCompany = async (req, res) => {
       createdAt,
     } = req.body;
 
-    if (
-      !companyId ||
-      !userId ||
-      !name ||
-      !industry ||
-      !location ||
-      !website ||
-      !contactEmail ||
-      !notes ||
-      !createdAt
-    ) {
-      return res.status(400).json({
-        message: "All fields are required.",
-      });
-    }
-
     const company = {
       companyId,
       userId,
@@ -140,22 +124,6 @@ const updateCompany = async (req, res) => {
       notes,
       createdAt,
     } = req.body;
-
-    if (
-      !companyId ||
-      !userId ||
-      !name ||
-      !industry ||
-      !location ||
-      !website ||
-      !contactEmail ||
-      !notes ||
-      !createdAt
-    ) {
-      return res.status(400).json({
-        message: "All fields are required.",
-      });
-    }
 
     const company = {
       companyId,
