@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const companiesController = require("../controllers/companiesController");
 const validation = require("../middleware/validMiddleware");
+const {
+  ensureAuthenticated,
+} = require("../middleware/authMiddleware");
 
 router.get(
   "/",
@@ -121,10 +124,15 @@ router.post(
       description: "Validation failed"
     }
 
+    #swagger.responses[401] = {
+      description: "Authentication required"
+    }
+
     #swagger.responses[500] = {
       description: "Failed to create company"
     }
   */
+  ensureAuthenticated,
   validation.saveCompany,
   companiesController.createCompany
 );
@@ -203,6 +211,10 @@ router.put(
       description: "Invalid company ID or validation failed"
     }
 
+    #swagger.responses[401] = {
+      description: "Authentication required"
+    }
+
     #swagger.responses[404] = {
       description: "Company not found"
     }
@@ -211,6 +223,7 @@ router.put(
       description: "Failed to update company"
     }
   */
+  ensureAuthenticated,
   validation.saveCompany,
   companiesController.updateCompany
 );
@@ -239,6 +252,10 @@ router.delete(
       description: "Invalid company ID"
     }
 
+    #swagger.responses[401] = {
+      description: "Authentication required"
+    }
+
     #swagger.responses[404] = {
       description: "Company not found"
     }
@@ -247,6 +264,7 @@ router.delete(
       description: "Failed to delete company"
     }
   */
+  ensureAuthenticated,
   companiesController.deleteCompany
 );
 

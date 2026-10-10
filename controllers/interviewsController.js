@@ -1,11 +1,20 @@
+const { ObjectId } = require("mongodb");
+const { getDatabase } = require("../db/connect");
+
 const getAllInterviews = async (req, res) => {
   try {
-    res.status(200).json({
-      message: "Get all interviews",
-    });
+    const db = getDatabase();
+
+    const interviews = await db
+      .collection("interviews")
+      .find()
+      .toArray();
+
+    return res.status(200).json(interviews);
   } catch (error) {
     console.error("Error getting interviews:", error);
-    res.status(500).json({
+
+    return res.status(500).json({
       error: "Failed to retrieve interviews",
     });
   }
@@ -13,12 +22,33 @@ const getAllInterviews = async (req, res) => {
 
 const getInterviewById = async (req, res) => {
   try {
-    res.status(200).json({
-      message: `Get interview ${req.params.id}`,
-    });
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: "Invalid interview ID",
+      });
+    }
+
+    const db = getDatabase();
+
+    const interview = await db
+      .collection("interviews")
+      .findOne({
+        _id: new ObjectId(id),
+      });
+
+    if (!interview) {
+      return res.status(404).json({
+        error: "Interview not found",
+      });
+    }
+
+    return res.status(200).json(interview);
   } catch (error) {
     console.error("Error getting interview:", error);
-    res.status(500).json({
+
+    return res.status(500).json({
       error: "Failed to retrieve interview",
     });
   }
@@ -26,12 +56,46 @@ const getInterviewById = async (req, res) => {
 
 const createInterview = async (req, res) => {
   try {
-    res.status(201).json({
+    const {
+      userId,
+      applicationId,
+      interviewDate,
+      interviewType,
+      interviewer,
+      location,
+      status,
+      notes,
+    } = req.body;
+
+    const interview = {
+      userId,
+      applicationId,
+      interviewDate: new Date(interviewDate),
+      interviewType,
+      interviewer,
+      location,
+      status,
+      notes,
+      createdAt: new Date(),
+    };
+
+    const db = getDatabase();
+
+    const result = await db
+      .collection("interviews")
+      .insertOne(interview);
+
+    return res.status(201).json({
       message: "Interview created successfully",
+      interview: {
+        _id: result.insertedId,
+        ...interview,
+      },
     });
   } catch (error) {
     console.error("Error creating interview:", error);
-    res.status(500).json({
+
+    return res.status(500).json({
       error: "Failed to create interview",
     });
   }
@@ -39,12 +103,63 @@ const createInterview = async (req, res) => {
 
 const updateInterview = async (req, res) => {
   try {
-    res.status(200).json({
-      message: `Interview ${req.params.id} updated successfully`,
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: "Invalid interview ID",
+      });
+    }
+
+    const {
+      userId,
+      applicationId,
+      interviewDate,
+      interviewType,
+      interviewer,
+      location,
+      status,
+      notes,
+    } = req.body;
+
+    const updatedInterview = {
+      userId,
+      applicationId,
+      interviewDate: new Date(interviewDate),
+      interviewType,
+      interviewer,
+      location,
+      status,
+      notes,
+      updatedAt: new Date(),
+    };
+
+    const db = getDatabase();
+
+    const result = await db
+      .collection("interviews")
+      .updateOne(
+        {
+          _id: new ObjectId(id),
+        },
+        {
+          $set: updatedInterview,
+        }
+      );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        error: "Interview not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Interview updated successfully",
     });
   } catch (error) {
     console.error("Error updating interview:", error);
-    res.status(500).json({
+
+    return res.status(500).json({
       error: "Failed to update interview",
     });
   }
@@ -52,12 +167,35 @@ const updateInterview = async (req, res) => {
 
 const deleteInterview = async (req, res) => {
   try {
-    res.status(200).json({
-      message: `Interview ${req.params.id} deleted successfully`,
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: "Invalid interview ID",
+      });
+    }
+
+    const db = getDatabase();
+
+    const result = await db
+      .collection("interviews")
+      .deleteOne({
+        _id: new ObjectId(id),
+      });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        error: "Interview not found",
+      });
+    }
+
+    return res.status(200).json({
+      message: "Interview deleted successfully",
     });
   } catch (error) {
     console.error("Error deleting interview:", error);
-    res.status(500).json({
+
+    return res.status(500).json({
       error: "Failed to delete interview",
     });
   }
