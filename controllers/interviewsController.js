@@ -1,124 +1,12 @@
 const { getDatabase } = require("../db/connect");
 const { ObjectId } = require("mongodb");
 
-const COLLECTION = "interviews";
-
-const getCollection = () =>
-  getDatabase().collection(COLLECTION);
-
-const VALID_TYPES = [
-  "Phone",
-  "Technical",
-  "Behavioral",
-  "HR",
-  "Final",
-  "Other",
-];
-
-const VALID_STATUSES = [
-  "Scheduled",
-  "Completed",
-  "Cancelled",
-  "Rescheduled",
-];
-
-/*
-  Interview document shape:
-  {
-    "userId": ObjectId,
-    "applicationId": ObjectId,
-    "interviewDate": "2026-09-25",
-    "interviewType": "Technical",
-    "interviewer": "Jane Smith",
-    "location": "Online",
-    "status": "Scheduled",
-    "notes": "Prepare Node.js and MongoDB questions.",
-    "createdAt": "2026-09-18T00:00:00.000Z"
-  }
-*/
-
-// Returns an error message string,
-// or null if the body is valid.
-const validateInterview = (body) => {
-  const {
-    userId,
-    applicationId,
-    interviewDate,
-    interviewType,
-    status,
-  } = body;
-
-  if (
-    !userId ||
-    !applicationId ||
-    !interviewDate
-  ) {
-    return (
-      "userId, applicationId, and " +
-      "interviewDate are required."
-    );
-  }
-
-  if (
-    !ObjectId.isValid(userId) ||
-    !ObjectId.isValid(applicationId)
-  ) {
-    return (
-      "userId and applicationId must be " +
-      "valid ObjectIds."
-    );
-  }
-
-  if (isNaN(Date.parse(interviewDate))) {
-    return (
-      "interviewDate must be a valid date " +
-      "(e.g. 2026-09-25)."
-    );
-  }
-
-  if (
-    interviewType &&
-    !VALID_TYPES.includes(interviewType)
-  ) {
-    return (
-      "interviewType must be one of: " +
-      `${VALID_TYPES.join(", ")}.`
-    );
-  }
-
-  if (
-    status &&
-    !VALID_STATUSES.includes(status)
-  ) {
-    return (
-      "status must be one of: " +
-      `${VALID_STATUSES.join(", ")}.`
-    );
-  }
-
-  return null;
-};
-
-// Builds the editable interview fields.
-// createdAt is excluded so updates do not overwrite it.
-const buildInterview = (body) => ({
-  userId: new ObjectId(body.userId),
-  applicationId: new ObjectId(
-    body.applicationId
-  ),
-  interviewDate: body.interviewDate,
-  interviewType: body.interviewType,
-  interviewer: body.interviewer,
-  location: body.location,
-  status: body.status || "Scheduled",
-  notes: body.notes,
-});
-
 const getAllInterviews = async (req, res) => {
   //#swagger.tags=['Interviews']
-
   try {
-    const interviews = await getCollection()
+    const db = getDatabase();
+    const interviews = await db
+      .collection("interviews")
       .find()
       .toArray();
 
@@ -137,22 +25,26 @@ const getAllInterviews = async (req, res) => {
 
 const getInterviewById = async (req, res) => {
   //#swagger.tags=['Interviews']
+  const { id } = req.params;
 
-  if (!ObjectId.isValid(req.params.id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(400).json({
-      message: "Must use a valid interview id.",
+      error: "Invalid interview ID",
     });
   }
 
   try {
-    const interview = await getCollection()
+    const db = getDatabase();
+
+    const interview = await db
+      .collection("interviews")
       .findOne({
-        _id: new ObjectId(req.params.id),
+        _id: new ObjectId(id),
       });
 
     if (!interview) {
       return res.status(404).json({
-        message: "Interview not found.",
+        error: "Interview not found",
       });
     }
 
@@ -171,35 +63,27 @@ const getInterviewById = async (req, res) => {
 
 const createInterview = async (req, res) => {
   //#swagger.tags=['Interviews']
-
-  const validationError =
-    validateInterview(req.body);
-
-  if (validationError) {
-    return res.status(400).json({
-      message: validationError,
-    });
-  }
-
   try {
+    const db = getDatabase();
+
     const interview = {
-      ...buildInterview(req.body),
-      createdAt: new Date().toISOString(),
+      userId: req.body.userId,
+      applicationId: req.body.applicationId,
+      interviewDate: req.body.interviewDate,
+      interviewType: req.body.interviewType,
+      interviewer: req.body.interviewer,
+      location: req.body.location,
+      status: req.body.status,
+      notes: req.body.notes,
     };
 
-    const response = await getCollection()
+    const result = await db
+      .collection("interviews")
       .insertOne(interview);
 
-    if (!response.acknowledged) {
-      return res.status(500).json({
-        message:
-          "Some error occurred while creating " +
-          "the interview.",
-      });
-    }
-
     return res.status(201).json({
-      id: response.insertedId,
+      message: "Interview created successfully",
+      interviewId: result.insertedId,
     });
   } catch (error) {
     console.error(
@@ -215,40 +99,48 @@ const createInterview = async (req, res) => {
 
 const updateInterview = async (req, res) => {
   //#swagger.tags=['Interviews']
+  const { id } = req.params;
 
-  if (!ObjectId.isValid(req.params.id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(400).json({
-      message: "Must use a valid interview id.",
-    });
-  }
-
-  const validationError =
-    validateInterview(req.body);
-
-  if (validationError) {
-    return res.status(400).json({
-      message: validationError,
+      error: "Invalid interview ID",
     });
   }
 
   try {
-    const response = await getCollection()
+    const db = getDatabase();
+
+    const interview = {
+      userId: req.body.userId,
+      applicationId: req.body.applicationId,
+      interviewDate: req.body.interviewDate,
+      interviewType: req.body.interviewType,
+      interviewer: req.body.interviewer,
+      location: req.body.location,
+      status: req.body.status,
+      notes: req.body.notes,
+    };
+
+    const result = await db
+      .collection("interviews")
       .updateOne(
         {
-          _id: new ObjectId(req.params.id),
+          _id: new ObjectId(id),
         },
         {
-          $set: buildInterview(req.body),
+          $set: interview,
         }
       );
 
-    if (response.matchedCount === 0) {
+    if (result.matchedCount === 0) {
       return res.status(404).json({
-        message: "Interview not found.",
+        error: "Interview not found",
       });
     }
 
-    return res.status(204).send();
+    return res.status(200).json({
+      message: "Interview updated successfully",
+    });
   } catch (error) {
     console.error(
       "Error updating interview:",
@@ -263,26 +155,32 @@ const updateInterview = async (req, res) => {
 
 const deleteInterview = async (req, res) => {
   //#swagger.tags=['Interviews']
+  const { id } = req.params;
 
-  if (!ObjectId.isValid(req.params.id)) {
+  if (!ObjectId.isValid(id)) {
     return res.status(400).json({
-      message: "Must use a valid interview id.",
+      error: "Invalid interview ID",
     });
   }
 
   try {
-    const response = await getCollection()
+    const db = getDatabase();
+
+    const result = await db
+      .collection("interviews")
       .deleteOne({
-        _id: new ObjectId(req.params.id),
+        _id: new ObjectId(id),
       });
 
-    if (response.deletedCount === 0) {
+    if (result.deletedCount === 0) {
       return res.status(404).json({
-        message: "Interview not found.",
+        error: "Interview not found",
       });
     }
 
-    return res.status(204).send();
+    return res.status(200).json({
+      message: "Interview deleted successfully",
+    });
   } catch (error) {
     console.error(
       "Error deleting interview:",
