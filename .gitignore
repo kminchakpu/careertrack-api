@@ -3,4 +3,3 @@ node_modules/
 swagger-output.json
 coverage/
 .DS_Store
-/applications.rest

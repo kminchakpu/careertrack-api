@@ -1,210 +1,57 @@
-const { ObjectId } = require("mongodb");
-const { getDatabase } = require("../db/connect");
+const { getDatabase } = require('../db/connect');
+const ObjectId = require('mongodb').ObjectId;
+
+const COLLECTION = 'interviews';
+const getCollection = () => getDatabase().collection(COLLECTION);
+
+const VALID_TYPES = ['Phone', 'Technical', 'Behavioral', 'HR', 'Final', 'Other'];
+const VALID_STATUSES = ['Scheduled', 'Completed', 'Cancelled', 'Rescheduled'];
+
+// Returns an error message string, or null if the body is valid.
+const validateInterview = (body) => {
+    const { userId, applicationId, interviewDate, interviewType, status } = body;
+
+    if (!userId || !applicationId || !interviewDate) {
+        return 'userId, applicationId, and interviewDate are required';
+    }
+    if (!ObjectId.isValid(userId) || !ObjectId.isValid(applicationId)) {
+        return 'userId and applicationId must be valid ObjectIds';
+    }
+    if (isNaN(Date.parse(interviewDate))) {
+        return 'interviewDate must be a valid date (e.g. 2026-09-25)';
+    }
+    if (interviewType && !VALID_TYPES.includes(interviewType)) {
+        return `interviewType must be one of: ${VALID_TYPES.join(', ')}`;
+    }
+    if (status && !VALID_STATUSES.includes(status)) {
+        return `status must be one of: ${VALID_STATUSES.join(', ')}`;
+    }
+    return null;
+};
+
+// Editable fields only (createdAt is set once on create, updatedAt on update).
+const buildInterview = (body) => ({
+    userId: new ObjectId(body.userId),
+    applicationId: new ObjectId(body.applicationId),
+    interviewDate: new Date(body.interviewDate),
+    interviewType: body.interviewType,
+    interviewer: body.interviewer,
+    location: body.location,
+    status: body.status || 'Scheduled',
+    notes: body.notes,
+});
 
 const getAllInterviews = async (req, res) => {
-  try {
-    const db = getDatabase();
-
-    const interviews = await db
-      .collection("interviews")
-      .find()
-      .toArray();
-
-    return res.status(200).json(interviews);
-  } catch (error) {
-    console.error("Error getting interviews:", error);
-
-    return res.status(500).json({
-      error: "Failed to retrieve interviews",
-    });
-  }
+    /*  #swagger.tags = ['Interviews']
+        #swagger.description = 'Get all interviews'
+    */
+    try {
+        const interviews = await getCollection().find().toArray();
+        return res.status(200).json(interviews);
+    } catch (error) {
+        console.error('Error getting interviews:', error);
+        return res.status(500).json({ error: 'Failed to retrieve interviews' });
+    }
 };
 
-const getInterviewById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({
-        error: "Invalid interview ID",
-      });
-    }
-
-    const db = getDatabase();
-
-    const interview = await db
-      .collection("interviews")
-      .findOne({
-        _id: new ObjectId(id),
-      });
-
-    if (!interview) {
-      return res.status(404).json({
-        error: "Interview not found",
-      });
-    }
-
-    return res.status(200).json(interview);
-  } catch (error) {
-    console.error("Error getting interview:", error);
-
-    return res.status(500).json({
-      error: "Failed to retrieve interview",
-    });
-  }
-};
-
-const createInterview = async (req, res) => {
-  try {
-    const {
-      userId,
-      applicationId,
-      interviewDate,
-      interviewType,
-      interviewer,
-      location,
-      status,
-      notes,
-    } = req.body;
-
-    const interview = {
-      userId,
-      applicationId,
-      interviewDate: new Date(interviewDate),
-      interviewType,
-      interviewer,
-      location,
-      status,
-      notes,
-      createdAt: new Date(),
-    };
-
-    const db = getDatabase();
-
-    const result = await db
-      .collection("interviews")
-      .insertOne(interview);
-
-    return res.status(201).json({
-      message: "Interview created successfully",
-      interview: {
-        _id: result.insertedId,
-        ...interview,
-      },
-    });
-  } catch (error) {
-    console.error("Error creating interview:", error);
-
-    return res.status(500).json({
-      error: "Failed to create interview",
-    });
-  }
-};
-
-const updateInterview = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({
-        error: "Invalid interview ID",
-      });
-    }
-
-    const {
-      userId,
-      applicationId,
-      interviewDate,
-      interviewType,
-      interviewer,
-      location,
-      status,
-      notes,
-    } = req.body;
-
-    const updatedInterview = {
-      userId,
-      applicationId,
-      interviewDate: new Date(interviewDate),
-      interviewType,
-      interviewer,
-      location,
-      status,
-      notes,
-      updatedAt: new Date(),
-    };
-
-    const db = getDatabase();
-
-    const result = await db
-      .collection("interviews")
-      .updateOne(
-        {
-          _id: new ObjectId(id),
-        },
-        {
-          $set: updatedInterview,
-        }
-      );
-
-    if (result.matchedCount === 0) {
-      return res.status(404).json({
-        error: "Interview not found",
-      });
-    }
-
-    return res.status(200).json({
-      message: "Interview updated successfully",
-    });
-  } catch (error) {
-    console.error("Error updating interview:", error);
-
-    return res.status(500).json({
-      error: "Failed to update interview",
-    });
-  }
-};
-
-const deleteInterview = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({
-        error: "Invalid interview ID",
-      });
-    }
-
-    const db = getDatabase();
-
-    const result = await db
-      .collection("interviews")
-      .deleteOne({
-        _id: new ObjectId(id),
-      });
-
-    if (result.deletedCount === 0) {
-      return res.status(404).json({
-        error: "Interview not found",
-      });
-    }
-
-    return res.status(200).json({
-      message: "Interview deleted successfully",
-    });
-  } catch (error) {
-    console.error("Error deleting interview:", error);
-
-    return res.status(500).json({
-      error: "Failed to delete interview",
-    });
-  }
-};
-
-module.exports = {
-  getAllInterviews,
-  getInterviewById,
-  createInterview,
-  updateInterview,
-  deleteInterview,
-};
+const getInterviewById =
