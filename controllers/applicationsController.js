@@ -1,112 +1,234 @@
-const { getDatabase } = require('../db/connect');
-const ObjectId = require('mongodb').ObjectId;
+const { ObjectId } = require("mongodb");
+const { getDatabase } = require("../db/connect");
 
-const COLLECTION = 'applications';
-const getCollection = () => getDatabase().collection(COLLECTION);
+const COLLECTION = "applications";
 
-const buildApplication = (body) => ({
-    userId: body.userId,
-    companyId: body.companyId,
-    jobTitle: body.jobTitle,
-    location: body.location,
-    applicationDate: body.applicationDate,
-    status: body.status,
-    jobType: body.jobType,
-    salaryRange: body.salaryRange,
-    jobUrl: body.jobUrl,
-    notes: body.notes,
-    createdAt: new Date().toISOString(),
-});
+const getCollection = () => {
+  return getDatabase().collection(COLLECTION);
+};
 
 const getAllApplications = async (req, res) => {
-    //#swagger.tags=['Applications']
-    try {
-        const applications = await getCollection().find().toArray();
-        res.status(200).json(applications);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+  //#swagger.tags=['Applications']
+  try {
+    const applications = await getCollection()
+      .find()
+      .toArray();
+
+    res.status(200).json(applications);
+  } catch (error) {
+    console.error("Error getting applications:", error);
+
+    res.status(500).json({
+      error: "Failed to retrieve applications",
+    });
+  }
 };
 
 const getApplicationById = async (req, res) => {
-    //#swagger.tags=['Applications']
-    if (!ObjectId.isValid(req.params.id)) {
-        return res.status(400).json('Must use a valid application id');
+  //#swagger.tags=['Applications']
+  try {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: "Invalid application ID",
+      });
     }
-    try {
-        const application = await getCollection().findOne({ _id: new ObjectId(req.params.id) });
-        if (!application) {
-            return res.status(404).json('Application not found');
-        }
-        res.status(200).json(application);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+
+    const application = await getCollection().findOne({
+      _id: new ObjectId(id),
+    });
+
+    if (!application) {
+      return res.status(404).json({
+        error: "Application not found",
+      });
     }
+
+    res.status(200).json(application);
+  } catch (error) {
+    console.error("Error getting application:", error);
+
+    res.status(500).json({
+      error: "Failed to retrieve application",
+    });
+  }
 };
 
 const createApplication = async (req, res) => {
-    //#swagger.tags=['Applications']
-    const { userId, companyId, jobTitle } = req.body;
+  //#swagger.tags=['Applications']
+  try {
+    const {
+      userId,
+      companyId,
+      jobTitle,
+      location,
+      applicationDate,
+      status,
+      jobType,
+      salaryRange,
+      jobUrl,
+      notes,
+    } = req.body;
+
     if (!userId || !companyId || !jobTitle) {
-        return res.status(400).json({ message: 'userId, companyId, and jobTitle are required.' });
+      return res.status(400).json({
+        error: "userId, companyId, and jobTitle are required",
+      });
     }
-    try {
-        const response = await getCollection().insertOne(buildApplication(req.body));
-        if (response.acknowledged) {
-            res.status(201).json({ id: response.insertedId });
-        } else {
-            res.status(500).json('Some error occurred while creating the application');
-        }
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+
+    const newApplication = {
+      userId,
+      companyId,
+      jobTitle,
+      location: location || "",
+      applicationDate: applicationDate
+        ? new Date(applicationDate)
+        : new Date(),
+      status: status || "applied",
+      jobType: jobType || "",
+      salaryRange: salaryRange || "",
+      jobUrl: jobUrl || "",
+      notes: notes || "",
+      createdAt: new Date(),
+    };
+
+    const result = await getCollection().insertOne(
+      newApplication
+    );
+
+    res.status(201).json({
+      message: "Application created successfully",
+      applicationId: result.insertedId,
+      application: {
+        _id: result.insertedId,
+        ...newApplication,
+      },
+    });
+  } catch (error) {
+    console.error("Error creating application:", error);
+
+    res.status(500).json({
+      error: "Failed to create application",
+    });
+  }
 };
 
 const updateApplication = async (req, res) => {
-    //#swagger.tags=['Applications']
-    if (!ObjectId.isValid(req.params.id)) {
-        return res.status(400).json('Must use a valid application id');
+  //#swagger.tags=['Applications']
+  try {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: "Invalid application ID",
+      });
     }
-    const { userId, companyId, jobTitle } = req.body;
+
+    const {
+      userId,
+      companyId,
+      jobTitle,
+      location,
+      applicationDate,
+      status,
+      jobType,
+      salaryRange,
+      jobUrl,
+      notes,
+    } = req.body;
+
     if (!userId || !companyId || !jobTitle) {
-        return res.status(400).json({ message: 'userId, companyId, and jobTitle are required.' });
+      return res.status(400).json({
+        error: "userId, companyId, and jobTitle are required",
+      });
     }
-    try {
-        const response = await getCollection().replaceOne(
-            { _id: new ObjectId(req.params.id) },
-            buildApplication(req.body)
-        );
-        if (response.matchedCount > 0) {
-            res.status(204).send();
-        } else {
-            res.status(404).json('Application not found');
-        }
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+
+    const updatedApplication = {
+      userId,
+      companyId,
+      jobTitle,
+      location: location || "",
+      applicationDate: applicationDate
+        ? new Date(applicationDate)
+        : new Date(),
+      status: status || "applied",
+      jobType: jobType || "",
+      salaryRange: salaryRange || "",
+      jobUrl: jobUrl || "",
+      notes: notes || "",
+      updatedAt: new Date(),
+    };
+
+    const result = await getCollection().updateOne(
+      {
+        _id: new ObjectId(id),
+      },
+      {
+        $set: updatedApplication,
+      }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        error: "Application not found",
+      });
     }
+
+    const application = await getCollection().findOne({
+      _id: new ObjectId(id),
+    });
+
+    res.status(200).json({
+      message: "Application updated successfully",
+      application,
+    });
+  } catch (error) {
+    console.error("Error updating application:", error);
+
+    res.status(500).json({
+      error: "Failed to update application",
+    });
+  }
 };
 
 const deleteApplication = async (req, res) => {
-    //#swagger.tags=['Applications']
-    if (!ObjectId.isValid(req.params.id)) {
-        return res.status(400).json('Must use a valid application id');
+  //#swagger.tags=['Applications']
+  try {
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({
+        error: "Invalid application ID",
+      });
     }
-    try {
-        const response = await getCollection().deleteOne({ _id: new ObjectId(req.params.id) });
-        if (response.deletedCount > 0) {
-            res.status(204).send();
-        } else {
-            res.status(404).json('Application not found');
-        }
-    } catch (err) {
-        res.status(500).json({ message: err.message });
+
+    const result = await getCollection().deleteOne({
+      _id: new ObjectId(id),
+    });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        error: "Application not found",
+      });
     }
+
+    res.status(200).json({
+      message: "Application deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error deleting application:", error);
+
+    res.status(500).json({
+      error: "Failed to delete application",
+    });
+  }
 };
 
 module.exports = {
-    getAllApplications,
-    getApplicationById,
-    createApplication,
-    updateApplication,
-    deleteApplication
+  getAllApplications,
+  getApplicationById,
+  createApplication,
+  updateApplication,
+  deleteApplication,
 };

@@ -1,25 +1,49 @@
-const swaggerAutogen = require("swagger-autogen")();
+const swaggerAutogen = require("swagger-autogen")({
+  openapi: "3.0.0",
+});
+
 const doc = {
   info: {
     title: "CareerTrack API",
-    description: "CSE 341 Final Project - Job Application Tracking API",
+    version: "1.0.0",
+    description:
+      "API documentation for managing interviews and users in CareerTrack.",
   },
-  host: "localhost:8080",
-  schemes: ["http"],
+  servers: [
+    {
+      url: "http://localhost:8080",
+      description: "Local Development Server",
+    },
+    {
+      url: "https://careertrack-api-t7e8.onrender.com",
+      description: "Render Production Server",
+    },
+  ],
+  tags: [
+    {
+      name: "Interviews",
+      description: "Endpoints for managing interviews",
+    },
+    {
+      name: "Users",
+      description: "Endpoints for managing users",
+    },
+  ],
 };
+
 const outputFile = "./swagger-output.json";
-// Point swagger-autogen at app.js (not the individual route files).
-// app.js is where the routes are mounted with their prefixes
-// (e.g. app.use("/api/interviews", interviewsRoutes)), so autogen
-// follows each require() and documents the full paths like
-// /api/interviews/{id}. Listing the route files directly made every
-// route show up as "/" and "/{id}" and overwrite each other.
-// const endpointsFiles = [
-//   "./routes/applicationsRoutes.js",
-//   "./routes/companiesRoutes.js",
-//   "./routes/interviewsRoutes.js",
-//   "./routes/usersRoutes.js",
-//   "./routes/authRoutes.js",
-// ];
-const endpointsFiles = ["./app.js"];
-swaggerAutogen(outputFile, endpointsFiles, doc);
+const endpointsFiles = ["./swagger-routes.js"];
+
+swaggerAutogen(outputFile, endpointsFiles, doc)
+  .then(() => {
+    console.log(
+      "Swagger documentation generated successfully."
+    );
+  })
+  .catch((error) => {
+    console.error(
+      "Failed to generate Swagger documentation:",
+      error
+    );
+    process.exit(1);
+  });
