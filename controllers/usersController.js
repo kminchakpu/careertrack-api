@@ -13,7 +13,7 @@ const getAllUsers = async (req, res) => {
 
     return res.status(200).json(users);
   } catch (error) {
-    console.error("Error getting users:", error);
+    console.error("Error retrieving users:", error);
 
     return res.status(500).json({
       error: "Failed to retrieve users",
@@ -48,7 +48,7 @@ const getUserById = async (req, res) => {
 
     return res.status(200).json(user);
   } catch (error) {
-    console.error("Error getting user:", error);
+    console.error("Error retrieving user:", error);
 
     return res.status(500).json({
       error: "Failed to retrieve user",
@@ -59,19 +59,12 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
   //#swagger.tags=['Users']
   try {
-    const {
-      authId,
-      name,
-      email,
-      role,
-    } = req.body;
-
     const db = getDatabase();
 
     const existingUser = await db
       .collection("users")
       .findOne({
-        email: email.toLowerCase(),
+        email: req.body.email.toLowerCase(),
       });
 
     if (existingUser) {
@@ -81,10 +74,10 @@ const createUser = async (req, res) => {
     }
 
     const user = {
-      authId,
-      name,
-      email: email.toLowerCase(),
-      role,
+      authId: req.body.authId,
+      name: req.body.name,
+      email: req.body.email.toLowerCase(),
+      role: req.body.role,
       createdAt: new Date(),
     };
 
@@ -94,10 +87,7 @@ const createUser = async (req, res) => {
 
     return res.status(201).json({
       message: "User created successfully",
-      user: {
-        _id: result.insertedId,
-        ...user,
-      },
+      userId: result.insertedId,
     });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -119,36 +109,28 @@ const updateUser = async (req, res) => {
       });
     }
 
-    const {
-      authId,
-      name,
-      email,
-      role,
-    } = req.body;
-
     const db = getDatabase();
 
-    const existingUser = await db
+    const duplicateUser = await db
       .collection("users")
       .findOne({
-        email: email.toLowerCase(),
+        email: req.body.email.toLowerCase(),
         _id: {
           $ne: new ObjectId(id),
         },
       });
 
-    if (existingUser) {
+    if (duplicateUser) {
       return res.status(409).json({
         error: "A user with this email already exists",
       });
     }
 
-    const updatedUser = {
-      authId,
-      name,
-      email: email.toLowerCase(),
-      role,
-      updatedAt: new Date(),
+    const user = {
+      authId: req.body.authId,
+      name: req.body.name,
+      email: req.body.email.toLowerCase(),
+      role: req.body.role,
     };
 
     const result = await db
@@ -158,7 +140,7 @@ const updateUser = async (req, res) => {
           _id: new ObjectId(id),
         },
         {
-          $set: updatedUser,
+          $set: user,
         }
       );
 
