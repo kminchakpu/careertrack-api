@@ -22,23 +22,28 @@ const doc = {
   tags: [
     {
       name: "Applications",
-      description: "Endpoints for managing job applications",
+      description:
+        "Endpoints for managing job applications",
     },
     {
       name: "Companies",
-      description: "Endpoints for managing companies",
+      description:
+        "Endpoints for managing companies",
     },
     {
       name: "Interviews",
-      description: "Endpoints for managing interviews",
+      description:
+        "Endpoints for managing interviews",
     },
     {
       name: "Users",
-      description: "Endpoints for managing users",
+      description:
+        "Endpoints for managing users",
     },
     {
       name: "Authentication",
-      description: "Endpoints for Google OAuth authentication",
+      description:
+        "Endpoints for Google OAuth authentication",
     },
   ],
   components: {
@@ -52,17 +57,19 @@ const doc = {
       },
     },
   },
-  security: [
-    {
-      sessionAuth: [],
-    },
-  ],
 };
 
 const outputFile = "./swagger-output.json";
-const endpointsFiles = ["./swagger-routes.js"];
 
-swaggerAutogen(outputFile, endpointsFiles, doc)
+const endpointsFiles = [
+  "./swagger-routes.js",
+];
+
+swaggerAutogen(
+  outputFile,
+  endpointsFiles,
+  doc
+)
   .then(() => {
     console.log(
       "Swagger documentation generated successfully."

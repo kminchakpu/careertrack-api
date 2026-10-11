@@ -1,5 +1,4 @@
 const express = require("express");
-
 const applicationsRoutes = require("./routes/applicationsRoutes");
 const companiesRoutes = require("./routes/companiesRoutes");
 const interviewsRoutes = require("./routes/interviewsRoutes");
