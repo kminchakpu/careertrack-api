@@ -1,3 +1,9 @@
+## Team Mmbers
+- Kevin Cross Minchakpu
+- Bruno Celada
+- Laurel Xiomara Cerrato Ramirez
+- Stephen Sanders
+
 # CareerTrack API
 CareerTrack API is a RESTful web service designed to help users organize and manage their job-search activities. The API provides endpoints for tracking job applications, companies, interviews, and users while supporting authentication through Google OAuth.
 The project is built with Node.js, Express, and MongoDB and includes Swagger/OpenAPI documentation for testing and exploring the available endpoints.
