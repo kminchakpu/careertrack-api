@@ -12,7 +12,7 @@ const getAllInterviews = async (req, res) => {
 
     return res.status(200).json(interviews);
   } catch (error) {
-    console.error("Error getting interviews:", error);
+    console.error("Error retrieving interviews:", error);
 
     return res.status(500).json({
       error: "Failed to retrieve interviews",
@@ -46,7 +46,7 @@ const getInterviewById = async (req, res) => {
 
     return res.status(200).json(interview);
   } catch (error) {
-    console.error("Error getting interview:", error);
+    console.error("Error retrieving interview:", error);
 
     return res.status(500).json({
       error: "Failed to retrieve interview",
@@ -56,30 +56,18 @@ const getInterviewById = async (req, res) => {
 
 const createInterview = async (req, res) => {
   try {
-    const {
-      userId,
-      applicationId,
-      interviewDate,
-      interviewType,
-      interviewer,
-      location,
-      status,
-      notes,
-    } = req.body;
+    const db = getDatabase();
 
     const interview = {
-      userId,
-      applicationId,
-      interviewDate: new Date(interviewDate),
-      interviewType,
-      interviewer,
-      location,
-      status,
-      notes,
-      createdAt: new Date(),
+      userId: req.body.userId,
+      applicationId: req.body.applicationId,
+      interviewDate: req.body.interviewDate,
+      interviewType: req.body.interviewType,
+      interviewer: req.body.interviewer,
+      location: req.body.location,
+      status: req.body.status,
+      notes: req.body.notes,
     };
-
-    const db = getDatabase();
 
     const result = await db
       .collection("interviews")
@@ -87,10 +75,7 @@ const createInterview = async (req, res) => {
 
     return res.status(201).json({
       message: "Interview created successfully",
-      interview: {
-        _id: result.insertedId,
-        ...interview,
-      },
+      interviewId: result.insertedId,
     });
   } catch (error) {
     console.error("Error creating interview:", error);
@@ -111,30 +96,18 @@ const updateInterview = async (req, res) => {
       });
     }
 
-    const {
-      userId,
-      applicationId,
-      interviewDate,
-      interviewType,
-      interviewer,
-      location,
-      status,
-      notes,
-    } = req.body;
-
-    const updatedInterview = {
-      userId,
-      applicationId,
-      interviewDate: new Date(interviewDate),
-      interviewType,
-      interviewer,
-      location,
-      status,
-      notes,
-      updatedAt: new Date(),
-    };
-
     const db = getDatabase();
+
+    const interview = {
+      userId: req.body.userId,
+      applicationId: req.body.applicationId,
+      interviewDate: req.body.interviewDate,
+      interviewType: req.body.interviewType,
+      interviewer: req.body.interviewer,
+      location: req.body.location,
+      status: req.body.status,
+      notes: req.body.notes,
+    };
 
     const result = await db
       .collection("interviews")
@@ -143,7 +116,7 @@ const updateInterview = async (req, res) => {
           _id: new ObjectId(id),
         },
         {
-          $set: updatedInterview,
+          $set: interview,
         }
       );
 

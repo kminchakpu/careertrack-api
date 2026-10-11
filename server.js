@@ -1,21 +1,30 @@
-const dns = require('dns');
-dns.setServers(['8.8.8.8', '1.1.1.1']);
 require("dotenv").config();
 const app = require("./app");
 const { connectDatabase } = require("./db/connect");
-const PORT = process.env.PORT || 8080;
-async function startServer() {
-try {
-  await connectDatabase();
 
-  app.listen(PORT, () => {
-    console.log(`CareerTrack API running on port ${PORT}`);
-    console.log(`Local API: http://localhost:${PORT}`);
-    console.log(`API Documentation: http://localhost:${PORT}/api-docs`);
-  });
-} catch (error) {
-  console.error("Failed to start server:", error.message);
-  process.exit(1);
+const PORT = process.env.PORT || 8080;
+
+async function startServer() {
+  try {
+    await connectDatabase();
+
+    app.listen(PORT, () => {
+      console.log(`CareerTrack API running on port ${PORT}`);
+      console.log(`Local API: http://localhost:${PORT}`);
+      console.log(
+        `API Documentation: http://localhost:${PORT}/api-docs`
+      );
+      console.log(
+        `Google Authentication: http://localhost:${PORT}/auth/google`
+      );
+    });
+  } catch (error) {
+    console.error(
+      "Failed to start CareerTrack API:",
+      error.message
+    );
+    process.exit(1);
+  }
 }
-}
+
 startServer();

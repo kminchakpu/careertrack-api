@@ -1,17 +1,18 @@
-const mongodb = require("../db/connect");
 const { ObjectId } = require("mongodb");
+const { getDatabase } = require("../db/connect");
 
 const getAllCompanies = async (req, res) => {
   try {
-    const companies = await mongodb
-      .getDatabase()
+    const db = getDatabase();
+
+    const companies = await db
       .collection("companies")
       .find()
       .toArray();
 
     return res.status(200).json(companies);
   } catch (error) {
-    console.error("Error getting companies:", error);
+    console.error("Error retrieving companies:", error);
 
     return res.status(500).json({
       error: "Failed to retrieve companies",
@@ -29,8 +30,9 @@ const getCompanyById = async (req, res) => {
       });
     }
 
-    const company = await mongodb
-      .getDatabase()
+    const db = getDatabase();
+
+    const company = await db
       .collection("companies")
       .findOne({
         _id: new ObjectId(id),
@@ -44,7 +46,7 @@ const getCompanyById = async (req, res) => {
 
     return res.status(200).json(company);
   } catch (error) {
-    console.error("Error getting a company:", error);
+    console.error("Error retrieving company:", error);
 
     return res.status(500).json({
       error: "Failed to retrieve company",
@@ -54,67 +56,31 @@ const getCompanyById = async (req, res) => {
 
 const createCompany = async (req, res) => {
   try {
-    const {
-      companyId,
-      userId,
-      name,
-      industry,
-      location,
-      website,
-      contactEmail,
-      notes,
-      createdAt,
-    } = req.body;
-
-    if (
-      !companyId ||
-      !userId ||
-      !name ||
-      !industry ||
-      !location ||
-      !website ||
-      !contactEmail ||
-      !notes ||
-      !createdAt
-    ) {
-      return res.status(400).json({
-        message: "All fields are required.",
-      });
-    }
+    const db = getDatabase();
 
     const company = {
-      companyId,
-      userId,
-      name,
-      industry,
-      location,
-      website,
-      contactEmail,
-      notes,
-      createdAt,
+      userId: req.body.userId,
+      name: req.body.name,
+      industry: req.body.industry,
+      location: req.body.location,
+      website: req.body.website,
+      contactEmail: req.body.contactEmail,
+      notes: req.body.notes,
     };
 
-    const response = await mongodb
-      .getDatabase()
+    const result = await db
       .collection("companies")
       .insertOne(company);
 
-    if (!response.acknowledged) {
-      return res.status(500).json({
-        message: "Some error occurred while creating the company.",
-      });
-    }
-
     return res.status(201).json({
       message: "Company created successfully",
-      id: response.insertedId,
+      companyId: result.insertedId,
     });
   } catch (error) {
-    console.error("Error creating the company:", error);
+    console.error("Error creating company:", error);
 
     return res.status(500).json({
-      message: "Error creating the company",
-      error: error.message,
+      error: "Failed to create company",
     });
   }
 };
@@ -125,63 +91,36 @@ const updateCompany = async (req, res) => {
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
-        message: "You must use a valid company id to update it.",
+        error: "Invalid company ID",
       });
     }
 
-    const {
-      companyId,
-      userId,
-      name,
-      industry,
-      location,
-      website,
-      contactEmail,
-      notes,
-      createdAt,
-    } = req.body;
-
-    if (
-      !companyId ||
-      !userId ||
-      !name ||
-      !industry ||
-      !location ||
-      !website ||
-      !contactEmail ||
-      !notes ||
-      !createdAt
-    ) {
-      return res.status(400).json({
-        message: "All fields are required.",
-      });
-    }
+    const db = getDatabase();
 
     const company = {
-      companyId,
-      userId,
-      name,
-      industry,
-      location,
-      website,
-      contactEmail,
-      notes,
-      createdAt,
+      userId: req.body.userId,
+      name: req.body.name,
+      industry: req.body.industry,
+      location: req.body.location,
+      website: req.body.website,
+      contactEmail: req.body.contactEmail,
+      notes: req.body.notes,
     };
 
-    const response = await mongodb
-      .getDatabase()
+    const result = await db
       .collection("companies")
-      .replaceOne(
+      .updateOne(
         {
           _id: new ObjectId(id),
         },
-        company
+        {
+          $set: company,
+        }
       );
 
-    if (response.matchedCount === 0) {
+    if (result.matchedCount === 0) {
       return res.status(404).json({
-        message: "Company not found",
+        error: "Company not found",
       });
     }
 
@@ -189,11 +128,10 @@ const updateCompany = async (req, res) => {
       message: "Company updated successfully",
     });
   } catch (error) {
-    console.error("Error updating the company:", error);
+    console.error("Error updating company:", error);
 
     return res.status(500).json({
-      message: "Error updating the company",
-      error: error.message,
+      error: "Failed to update company",
     });
   }
 };
@@ -204,32 +142,32 @@ const deleteCompany = async (req, res) => {
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
-        message: "You must use a valid company id to delete it.",
+        error: "Invalid company ID",
       });
     }
 
-    const response = await mongodb
-      .getDatabase()
+    const db = getDatabase();
+
+    const result = await db
       .collection("companies")
       .deleteOne({
         _id: new ObjectId(id),
       });
 
-    if (response.deletedCount === 0) {
+    if (result.deletedCount === 0) {
       return res.status(404).json({
-        message: "Company not found",
+        error: "Company not found",
       });
     }
 
     return res.status(200).json({
-      message: "Company removed successfully",
+      message: "Company deleted successfully",
     });
   } catch (error) {
-    console.error("Error deleting the company:", error);
+    console.error("Error deleting company:", error);
 
     return res.status(500).json({
-      message: "Error deleting the company",
-      error: error.message,
+      error: "Failed to delete company",
     });
   }
 };
