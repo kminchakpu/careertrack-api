@@ -1,0 +1,44 @@
+### APPLICATIONS
+
+### Get all applications
+GET http://localhost:8080/api/applications
+
+### Get application by id
+GET http://localhost:8080/api/applications/6ab3e572a6c146c62293f403
+
+### Create application
+POST http://localhost:8080/api/applications HTTP/1.1
+content-type: application/json
+
+{
+  "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+  "companyId": "65f1a2b3c4d5e6f7a8b9c0d5",
+  "jobTitle": "Web Services Developer",
+  "location": "Guatemala City, Guatemala",
+  "applicationDate": "2026-09-25",
+  "status": "Offer",
+  "jobType": "Full-time",
+  "salaryRange": "Q12,000 - Q16,000 mensual",
+  "jobUrl": "https://example.com/job/web-services-dev",
+  "notes": "Oferta recibida, evaluando condiciones."
+}
+
+### Update application
+PUT http://localhost:8080/api/applications/6ab3e572a6c146c62293f403 HTTP/1.1
+content-type: application/json
+
+{
+  "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+  "companyId": "65f1a2b3c4d5e6f7a8b9c0d2",
+  "jobTitle": "Senior Backend Developer",
+  "location": "Lagos, Nigeria",
+  "applicationDate": "2026-09-15",
+  "status": "Interviewing",
+  "jobType": "Full-time",
+  "salaryRange": "₦1,000,000 - ₦1,500,000 monthly",
+  "jobUrl": "https://example.com/job",
+  "notes": "Received a response, scheduling interview."
+}
+
+### Delete application
+DELETE http://localhost:8080/api/applications/6ab3e572a6c146c62293f403

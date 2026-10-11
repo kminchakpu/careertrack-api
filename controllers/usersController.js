@@ -2,6 +2,7 @@ const { ObjectId } = require("mongodb");
 const { getDatabase } = require("../db/connect");
 
 const getAllUsers = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     const db = getDatabase();
 
@@ -21,6 +22,7 @@ const getAllUsers = async (req, res) => {
 };
 
 const getUserById = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     const { id } = req.params;
 
@@ -55,6 +57,7 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     const db = getDatabase();
 
@@ -96,6 +99,7 @@ const createUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     const { id } = req.params;
 
@@ -159,6 +163,7 @@ const updateUser = async (req, res) => {
 };
 
 const deleteUser = async (req, res) => {
+  //#swagger.tags=['Users']
   try {
     const { id } = req.params;
 
