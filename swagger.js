@@ -20,14 +20,10 @@ const doc = {
     },
   ],
   tags: [
-    {
-      name: "Interviews",
-      description: "Endpoints for managing interviews",
-    },
-    {
-      name: "Users",
-      description: "Endpoints for managing users",
-    },
+     { name: "Applications", description: "Endpoints for managing job applications" },
+  { name: "Companies", description: "Endpoints for managing companies" },
+  { name: "Interviews", description: "Endpoints for managing interviews" },
+  { name: "Users", description: "Endpoints for managing users" },
   ],
 };
 
