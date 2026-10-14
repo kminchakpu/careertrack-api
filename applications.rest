@@ -33,7 +33,7 @@ content-type: application/json
   "jobTitle": "Senior Backend Developer",
   "location": "Lagos, Nigeria",
   "applicationDate": "2026-09-15",
-  "status": "Interviewing",
+  "status": "Interview",
   "jobType": "Full-time",
   "salaryRange": "₦1,000,000 - ₦1,500,000 monthly",
   "jobUrl": "https://example.com/job",

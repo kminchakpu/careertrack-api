@@ -1,0 +1,1164 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CareerTrack API",
+    "version": "1.0.0",
+    "description": "API documentation for managing job applications, companies, interviews, and users in CareerTrack. Authentication is handled through Google OAuth and Passport sessions."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://careertrack-api-t7e8.onrender.com",
+      "description": "Render Production Server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Applications",
+      "description": "Endpoints for managing job applications"
+    },
+    {
+      "name": "Companies",
+      "description": "Endpoints for managing companies"
+    },
+    {
+      "name": "Interviews",
+      "description": "Endpoints for managing interviews"
+    },
+    {
+      "name": "Users",
+      "description": "Endpoints for managing users"
+    },
+    {
+      "name": "Authentication",
+      "description": "Endpoints for Google OAuth authentication"
+    }
+  ],
+  "paths": {
+    "/auth/google": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Sign in with Google",
+        "description": "Starts the Google OAuth 2.0 authentication flow.",
+        "responses": {
+          "302": {
+            "description": "Redirects the user to Google for authentication"
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/google/callback": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Google OAuth callback",
+        "description": "Handles the response returned by Google after authentication.",
+        "responses": {
+          "302": {
+            "description": "Authentication successful and user redirected"
+          },
+          "401": {
+            "description": "Google authentication failed"
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Get authenticated user profile",
+        "description": "Returns the currently authenticated CareerTrack user.",
+        "responses": {
+          "200": {
+            "description": "Authenticated user returned successfully"
+          },
+          "401": {
+            "description": "User is not authenticated"
+          }
+        }
+      }
+    },
+    "/auth/status": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Check authentication status",
+        "description": "Checks whether the current user has an authenticated session.",
+        "responses": {
+          "200": {
+            "description": "Authentication status returned successfully"
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/failure": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Google authentication failure",
+        "description": "Returns an authentication failure response when Google OAuth authentication fails.",
+        "responses": {
+          "401": {
+            "description": "Google authentication failed"
+          }
+        },
+        "security": []
+      }
+    },
+    "/auth/logout": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Log out the current user",
+        "description": "Ends the authenticated Passport session.",
+        "responses": {
+          "200": {
+            "description": "User logged out successfully"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "500": {
+            "description": "Logout failed"
+          }
+        }
+      }
+    },
+    "/api/applications/": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Get all applications",
+        "description": "Retrieve all job applications.",
+        "responses": {
+          "200": {
+            "description": "Applications retrieved successfully"
+          },
+          "500": {
+            "description": "Failed to retrieve applications"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Create a new application",
+        "description": "Create a new job application. Authentication is required.",
+        "responses": {
+          "201": {
+            "description": "Application created successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "500": {
+            "description": "Failed to create application"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "companyId",
+                  "jobTitle",
+                  "location",
+                  "applicationDate",
+                  "status",
+                  "jobType"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "companyId": {
+                    "type": "string"
+                  },
+                  "jobTitle": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "applicationDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "Applied",
+                      "Screening",
+                      "Interview",
+                      "Offer",
+                      "Rejected",
+                      "Withdrawn"
+                    ]
+                  },
+                  "jobType": {
+                    "type": "string",
+                    "enum": [
+                      "Full-time",
+                      "Part-time",
+                      "Contract",
+                      "Internship",
+                      "Remote"
+                    ]
+                  },
+                  "salaryRange": {
+                    "type": "string"
+                  },
+                  "jobUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+                "companyId": "65f1a2b3c4d5e6f7a8b9c0d2",
+                "jobTitle": "Fullstack Developer",
+                "location": "Abuja, Nigeria",
+                "applicationDate": "2026-10-06",
+                "status": "Applied",
+                "jobType": "Full-time",
+                "salaryRange": "NGN 900,000 - 1,300,000 monthly",
+                "jobUrl": "https://example.com/job",
+                "notes": "Application submitted successfully."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/applications/{id}": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Get application by ID",
+        "description": "Retrieve a single job application by its ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Application ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid application ID"
+          },
+          "404": {
+            "description": "Application not found"
+          },
+          "500": {
+            "description": "Failed to retrieve application"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Update an application",
+        "description": "Update an existing job application by its ID. Authentication is required.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Application ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application updated successfully"
+          },
+          "400": {
+            "description": "Invalid application ID or validation failed"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Application not found"
+          },
+          "500": {
+            "description": "Failed to update application"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "companyId",
+                  "jobTitle",
+                  "location",
+                  "applicationDate",
+                  "status",
+                  "jobType"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "companyId": {
+                    "type": "string"
+                  },
+                  "jobTitle": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "applicationDate": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "Applied",
+                      "Screening",
+                      "Interview",
+                      "Offer",
+                      "Rejected",
+                      "Withdrawn"
+                    ]
+                  },
+                  "jobType": {
+                    "type": "string",
+                    "enum": [
+                      "Full-time",
+                      "Part-time",
+                      "Contract",
+                      "Internship",
+                      "Remote"
+                    ]
+                  },
+                  "salaryRange": {
+                    "type": "string"
+                  },
+                  "jobUrl": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+                "companyId": "65f1a2b3c4d5e6f7a8b9c0d2",
+                "jobTitle": "Senior Fullstack Developer",
+                "location": "Abuja, Nigeria",
+                "applicationDate": "2026-10-06",
+                "status": "Interview",
+                "jobType": "Full-time",
+                "salaryRange": "NGN 1,000,000 - 1,500,000 monthly",
+                "jobUrl": "https://example.com/job",
+                "notes": "Interview has been scheduled."
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Delete an application",
+        "description": "Delete a job application by its ID. Authentication is required.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Application ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application deleted successfully"
+          },
+          "400": {
+            "description": "Invalid application ID"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Application not found"
+          },
+          "500": {
+            "description": "Failed to delete application"
+          }
+        }
+      }
+    },
+    "/api/companies/": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Get all companies",
+        "description": "Retrieves all companies stored in the database.",
+        "responses": {
+          "200": {
+            "description": "Companies retrieved successfully"
+          },
+          "500": {
+            "description": "Failed to retrieve companies"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Create a new company",
+        "description": "Creates a new company in the database.",
+        "responses": {
+          "201": {
+            "description": "Company created successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "500": {
+            "description": "Failed to create company"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "industry",
+                  "location"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "industry": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "website": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "contactEmail": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+                "name": "TechNova Solutions",
+                "industry": "Information Technology",
+                "location": "Abuja, Nigeria",
+                "website": "https://example.com",
+                "contactEmail": "careers@example.com",
+                "notes": "Technology company specializing in software development and cloud solutions."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/companies/{id}": {
+      "get": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Get a company by ID",
+        "description": "Retrieves a single company using its MongoDB ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Company ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid company ID"
+          },
+          "404": {
+            "description": "Company not found"
+          },
+          "500": {
+            "description": "Failed to retrieve company"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Update a company",
+        "description": "Updates an existing company using its MongoDB ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Company ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company updated successfully"
+          },
+          "400": {
+            "description": "Invalid company ID or validation failed"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Company not found"
+          },
+          "500": {
+            "description": "Failed to update company"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name",
+                  "industry",
+                  "location"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "industry": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "website": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "contactEmail": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+                "name": "TechNova Solutions",
+                "industry": "Software and Cloud Services",
+                "location": "Abuja, Nigeria",
+                "website": "https://example.com",
+                "contactEmail": "jobs@example.com",
+                "notes": "Updated company information."
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Delete a company",
+        "description": "Deletes a company using its MongoDB ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Company ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Company deleted successfully"
+          },
+          "400": {
+            "description": "Invalid company ID"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Company not found"
+          },
+          "500": {
+            "description": "Failed to delete company"
+          }
+        }
+      }
+    },
+    "/api/interviews/": {
+      "get": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Get all interviews",
+        "description": "Retrieves all interviews stored in the database.",
+        "responses": {
+          "200": {
+            "description": "Interviews retrieved successfully"
+          },
+          "500": {
+            "description": "Failed to retrieve interviews"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Create a new interview",
+        "description": "Creates a new interview in the database. Authentication is required.",
+        "responses": {
+          "201": {
+            "description": "Interview created successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "500": {
+            "description": "Failed to create interview"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userId",
+                  "applicationId",
+                  "interviewDate",
+                  "interviewType",
+                  "status"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "applicationId": {
+                    "type": "string"
+                  },
+                  "interviewDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "interviewType": {
+                    "type": "string"
+                  },
+                  "interviewer": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+                "applicationId": "68de11111111111111111111",
+                "interviewDate": "2026-10-15T10:00:00.000Z",
+                "interviewType": "Technical Interview",
+                "interviewer": "Sarah Johnson",
+                "location": "Abuja, Nigeria",
+                "status": "Scheduled",
+                "notes": "Prepare for JavaScript, Node.js, and MongoDB technical questions."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/interviews/{id}": {
+      "get": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Get an interview by ID",
+        "description": "Retrieves a single interview using its MongoDB ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Interview ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interview retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid interview ID"
+          },
+          "404": {
+            "description": "Interview not found"
+          },
+          "500": {
+            "description": "Failed to retrieve interview"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Update an interview",
+        "description": "Updates an existing interview using its MongoDB ID. Authentication is required.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Interview ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interview updated successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Interview not found"
+          },
+          "500": {
+            "description": "Failed to update interview"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "userId",
+                  "applicationId",
+                  "interviewDate",
+                  "interviewType",
+                  "status"
+                ],
+                "properties": {
+                  "userId": {
+                    "type": "string"
+                  },
+                  "applicationId": {
+                    "type": "string"
+                  },
+                  "interviewDate": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "interviewType": {
+                    "type": "string"
+                  },
+                  "interviewer": {
+                    "type": "string"
+                  },
+                  "location": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "notes": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "userId": "65f1a2b3c4d5e6f7a8b9c0d1",
+                "applicationId": "68de11111111111111111111",
+                "interviewDate": "2026-10-16T14:00:00.000Z",
+                "interviewType": "Final Interview",
+                "interviewer": "Sarah Johnson",
+                "location": "Abuja, Nigeria",
+                "status": "Rescheduled",
+                "notes": "Interview rescheduled to the afternoon."
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Interviews"
+        ],
+        "summary": "Delete an interview",
+        "description": "Deletes an interview using its MongoDB ID. Authentication is required.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Interview ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Interview deleted successfully"
+          },
+          "400": {
+            "description": "Invalid interview ID"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "Interview not found"
+          },
+          "500": {
+            "description": "Failed to delete interview"
+          }
+        }
+      }
+    },
+    "/api/users/": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all users",
+        "description": "Retrieves all users stored in the database.",
+        "responses": {
+          "200": {
+            "description": "Users retrieved successfully"
+          },
+          "500": {
+            "description": "Failed to retrieve users"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create a new user",
+        "description": "Creates a new user in the database. Authentication is required.",
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Failed to create user"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "authId",
+                  "name",
+                  "email",
+                  "role"
+                ],
+                "properties": {
+                  "authId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "authId": "google-1029384756",
+                "name": "Daniel Okafor",
+                "email": "daniel.okafor@example.com",
+                "role": "user"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a user by ID",
+        "description": "Retrieves a single user using its MongoDB ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User retrieved successfully"
+          },
+          "400": {
+            "description": "Invalid user ID"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Failed to retrieve user"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update a user",
+        "description": "Updates an existing user using its MongoDB ID. Authentication is required.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated successfully"
+          },
+          "400": {
+            "description": "Validation failed"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Failed to update user"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "authId",
+                  "name",
+                  "email",
+                  "role"
+                ],
+                "properties": {
+                  "authId": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "role": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "authId": "google-1029384756",
+                "name": "Daniel Okafor",
+                "email": "daniel.okafor@example.com",
+                "role": "admin"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user",
+        "description": "Deletes a user using its MongoDB ID. Authentication is required.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully"
+          },
+          "400": {
+            "description": "Invalid user ID"
+          },
+          "401": {
+            "description": "Authentication required"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Failed to delete user"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "sessionAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "connect.sid",
+        "description": "Session cookie created after successful Google OAuth authentication."
+      }
+    }
+  }
+}
