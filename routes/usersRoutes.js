@@ -112,7 +112,7 @@ router.post(
       description: "Authentication required"
     }
 
-    #swagger.responses[412] = {
+    #swagger.responses[400] = {
       description: "Validation failed"
     }
 
@@ -195,7 +195,7 @@ router.put(
       description: "User not found"
     }
 
-    #swagger.responses[412] = {
+    #swagger.responses[400] = {
       description: "Validation failed"
     }
 

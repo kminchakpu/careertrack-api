@@ -12,7 +12,7 @@ const saveCompany = (req, res, next) => {
     };
     validator(req.body, validationRule, {}, (err, status) => {
         if (!status) {
-            return res.status(412).send({
+            return res.status(400).send({
                 success: false,
                 message: "Validation failed",
                 data: err
@@ -35,7 +35,7 @@ const saveInterview = (req, res, next) => {
     };
     validator(req.body, validationRule, {}, (err, status) => {
         if (!status) {
-            return res.status(412).send({
+            return res.status(400).send({
                 success: false,
                 message: "Validation failed",
                 data: err
@@ -54,7 +54,7 @@ const saveUser = (req, res, next) => {
     };
     validator(req.body, validationRule, {}, (err, status) => {
         if (!status) {
-            return res.status(412).send({
+            return res.status(400).send({
                 success: false,
                 message: "Validation failed",
                 data: err
