@@ -1,4 +1,4 @@
-## Team Mmbers
+## Team Members
 - Kevin Cross Minchakpu
 - Bruno Celada
 - Laurel Xiomara Cerrato Ramirez
@@ -299,17 +299,12 @@ Possible future improvements include:
 - Automated deployment testing
 - Frontend integration
 
-## Author/Team Members
-1. Kevin Cross Minchakpu
-2. Bruno Celada
-3. Laurel Xiomara Cerrato Ramirez
-4. Stephen Sanders
 
-CareerTrack API was developed as part of a web services/API development project.
 
 ## Repository
 GitHub repository: https://github.com/kminchakpu/careertrack-api
 
+CareerTrack API was developed as part of a web services/API development project.
 
 ## License
 This project is intended for educational purposes.
